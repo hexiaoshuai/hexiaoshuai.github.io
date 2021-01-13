@@ -417,7 +417,7 @@ var ContainerView = React.createClass({
                         errMsg = '验证失败，用户名或密码错了吧！'
                     }
                     alert(errMsg);
-                });
+                },"jsonp");
             } else {
                 location.href = "http://gitlab.meizu.com/oauth/authorize?client_id=ee4e49aa59e7a7a2a446f9206b380dabafb9c6172f570e7cbd6bed511283cdde&redirect_uri=http://hexiaoshuai.github.io/automerger/&response_type=token"
             }
