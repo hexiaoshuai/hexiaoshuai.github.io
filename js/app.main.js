@@ -21,19 +21,19 @@ const DEFAULT_CONFIG_PATH = 'config';
 /** 获取gitlab接口数据*/
 const URL_GITLAB_BASE = 'http://gitlab.meizu.com';
 /** GitLab的Api根地址*/
-const URL_GITLAB_BASE_API = `${URL_GITLAB_BASE}/api/v3`;
+const URL_GITLAB_BASE_API = `${URL_GITLAB_BASE}/api/v4`;
 /** GitLab获取登陆认证的URL*/
 const URL_GITLAB_SESSION = `${URL_GITLAB_BASE_API}/session`;
 /** GitLab获取用户信息的URL*/
 const URL_GITLAB_USER = `${URL_GITLAB_BASE}/u/`;
 /**　GitLab上指定项目的Api地址*/
-const URL_GITLAB_FILE = `${URL_GITLAB_BASE_API}/projects/${PROJECT_ID}/repository/files`;
+const URL_GITLAB_FILE = `${URL_GITLAB_BASE_API}/projects/${PROJECT_ID}/repository/files/`;
 /** Gitlab用于列出文件和目录*/
 const URL_GITLAB_TREE = `${URL_GITLAB_BASE_API}/projects/${PROJECT_ID}/repository/tree`;
 /** Gitlab没有用户头像*/
 const URL_NO_AVATAR = `${URL_GITLAB_BASE}/assets/no_avatar-849f9c04a3a0d0cea2424ae97b27447dc64a7dbfae83c036c45b403392f0e8ba.png`;
-const FILE_NAME_FLOWS = '/flows.json';
-const FILE_NAME_MAIN = '/main.json';
+const FILE_NAME_FLOWS = '%2Fflows.json';
+const FILE_NAME_MAIN = '%2Fmain.json';
 
 /** 全局用户信息*/
 var globalUserInfo = null;
@@ -164,9 +164,8 @@ var getRemoteContent = function (fileName, callback, exception) {
     let params = {
         access_token: globalUserInfo.access_token,
         ref: BRANCH,
-        file_path: `${DEFAULT_CONFIG_PATH}/${curSelected}${fileName}`
     };
-    $.getJSON(URL_GITLAB_FILE, params, (response)=> {
+    $.getJSON(URL_GITLAB_FILE + `${DEFAULT_CONFIG_PATH}%2F${curSelected}${fileName}`, params, (response)=> {
         let content = response.content;
         if (response.encoding && response.encoding === 'base64') {
             content = window.atob(content);
@@ -225,15 +224,14 @@ var commitRemoteFile = function (content, fileName, log, callback, exception) {
     //组建提交参数
     let params = {
         access_token: globalUserInfo.access_token,
-        branch_name: BRANCH,
-        file_path: `${DEFAULT_CONFIG_PATH}/${curSelected}${fileName}`,
+        branch: BRANCH,
         content: content,
         commit_message: log
     };
     //Ajax做PUT提交
     $.ajax({
         type: 'PUT',
-        url: URL_GITLAB_FILE,
+        url: URL_GITLAB_FILE + `${DEFAULT_CONFIG_PATH}%2F${curSelected}${fileName}`,
         data: params,
         success: function (data) {
             if (callback) {
@@ -417,9 +415,9 @@ var ContainerView = React.createClass({
                         errMsg = '验证失败，用户名或密码错了吧！'
                     }
                     alert(errMsg);
-                },"jsonp");
+                });
             } else {
-                location.href = "http://gitlab.meizu.com/oauth/authorize?client_id=ee4e49aa59e7a7a2a446f9206b380dabafb9c6172f570e7cbd6bed511283cdde&redirect_uri=http://hexiaoshuai.github.io/automerger/&response_type=token"
+                location.href = "http://gitlab.meizu.com/oauth/authorize?client_id=ee4e49aa59e7a7a2a446f9206b380dabafb9c6172f570e7cbd6bed511283cdde&redirect_uri=http://hexiaoshuai.github.io/&response_type=token"
             }
             return (<LoginView onLogin={this.onLogin}/>)
         } else {
